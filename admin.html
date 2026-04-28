@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<div class="container">
+ 
+  <h1>管理画面</h1>
+ 
+  <button id="reset-btn">全削除</button>
+ 
+  <div id="summary"></div>
+  <div id="shift-list"></div>
+ 
+</div>
+ 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+ 
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "shift-app-e4097.firebaseapp.com",
+  projectId: "shift-app2",
+  storageBucket: "shift-app-e4097.appspot.com",
+  messagingSenderId: "450328007857",
+  appId: "1:450328007857:web:e30c5b7a3d2238bb8cfe90"
+};
+ 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+ 
+const shiftList = document.getElementById("shift-list");
+const summary = document.getElementById("summary");
+const resetBtn = document.getElementById("reset-btn");
+ 
+let countMap = {};
+ 
+// リアルタイム表示
+db.collection("shifts")
+.orderBy("createdAt","desc")
+.onSnapshot(snapshot => {
+ 
+  shiftList.innerHTML = "";
+  summary.innerHTML = "";
+  countMap = {};
+ 
+  snapshot.forEach(doc => {
+ 
+    const d = doc.data();
+ 
+    const staff = document.createElement("div");
+    staff.classList.add("staff");
+ 
+    let html = "";
+ 
+    d.shifts.forEach(s => {
+ 
+      const key = `${s.date}-${s.time}`;
+      countMap[key] = (countMap[key] || 0) + 1;
+ 
+      html += `<p>${s.date} ${s.time}</p>`;
+    });
+ 
+    staff.innerHTML = `
+      <h2>${d.name}</h2>
+      ${html}
+    `;
+ 
+    shiftList.appendChild(staff);
+  });
+ 
+  let sum = "<div class='staff'><h2>人数集計</h2>";
+ 
+  for (const k in countMap) {
+    sum += `<p>${k} : ${countMap[k]}人</p>`;
+  }
+ 
+  sum += "</div>";
+ 
+  summary.innerHTML = sum;
+});
+ 
+// 全削除
+resetBtn.onclick = async () => {
+ 
+  const pass = prompt("管理者パスワード");
+  if (pass !== "1234") return;
+ 
+  const snap = await db.collection("shifts").get();
+ 
+  snap.forEach(doc => {
+    db.collection("shifts").doc(doc.id).delete();
+  });
+ 
+  alert("削除しました");
+};
+</script>
+ 
+</body>
+</html>
+ 
+ 
+ 
+
+
+ 

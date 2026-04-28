@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シフト提出</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<div class="container">
+ 
+  <h1>シフト提出</h1>
+ 
+  <input type="text" id="name-input" placeholder="名前を入力">
+ 
+  <div class="month-control">
+    <button id="prev-month">←</button>
+    <h2 id="month-title"></h2>
+    <button id="next-month">→</button>
+  </div>
+ 
+  <div id="calendar"></div>
+ 
+  <button class="submit-btn">送信</button>
+ 
+</div>
+ 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+ 
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "shift-app-e4097.firebaseapp.com",
+  projectId: "shift-app2",
+  storageBucket: "shift-app-e4097.appspot.com",
+  messagingSenderId: "450328007857",
+  appId: "1:450328007857:web:e30c5b7a3d2238bb8cfe90"
+};
+ 
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+ 
+// カレンダー
+const calendar = document.getElementById("calendar");
+const submitButton = document.querySelector(".submit-btn");
+const nameInput = document.getElementById("name-input");
+const monthTitle = document.getElementById("month-title");
+const prevMonthBtn = document.getElementById("prev-month");
+const nextMonthBtn = document.getElementById("next-month");
+ 
+let year = 2026;
+let month = 4;
+ 
+const weekdays = ["日","月","火","水","木","金","土"];
+ 
+function renderCalendar() {
+ 
+  calendar.innerHTML = "";
+  monthTitle.textContent = `${year}年 ${month}月`;
+ 
+  const daysInMonth = new Date(year, month, 0).getDate();
+ 
+  for (let i = 1; i <= daysInMonth; i++) {
+ 
+    const date = new Date(year, month - 1, i);
+    const dayOfWeek = weekdays[date.getDay()];
+ 
+    const day = document.createElement("div");
+    day.classList.add("day");
+ 
+    day.innerHTML = `
+      <h2>${month}/${i} (${dayOfWeek})</h2>
+ 
+      <button class="shift-btn" data-date="${month}/${i}" data-time="前半">
+        前半 18:00〜22:00
+      </button>
+ 
+      <button class="shift-btn" data-date="${month}/${i}" data-time="後半">
+        後半 22:00〜03:00
+      </button>
+    `;
+ 
+    calendar.appendChild(day);
+  }
+ 
+  document.querySelectorAll(".shift-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("active");
+    });
+  });
+}
+ 
+renderCalendar();
+ 
+// 月移動
+prevMonthBtn.onclick = () => {
+  month--;
+  if (month < 1) {
+    month = 12;
+    year--;
+  }
+  renderCalendar();
+};
+ 
+nextMonthBtn.onclick = () => {
+  month++;
+  if (month > 12) {
+    month = 1;
+    year++;
+  }
+  renderCalendar();
+};
+ 
+// 送信（Firebase）
+submitButton.addEventListener("click", () => {
+ 
+  const name = nameInput.value.trim();
+  if (!name) return alert("名前を入力してください");
+ 
+  const shifts = [];
+ 
+  document.querySelectorAll(".active").forEach(btn => {
+    shifts.push({
+      date: btn.dataset.date,
+      time: btn.dataset.time
+    });
+  });
+ 
+  db.collection("shifts").add({
+    name,
+    shifts,
+    createdAt: new Date()
+  });
+ 
+  alert("提出しました！");
+});
+</script>
+ 
+</body>
+</html>
+ 
+ 
+ 
+ 
+ 
+ 

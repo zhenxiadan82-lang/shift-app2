@@ -1,0 +1,99 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #121212;
+  color: white;
+}
+ 
+.container {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
+}
+ 
+h1 {
+  text-align: center;
+}
+ 
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+ 
+.month-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+ 
+.month-control button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background: #333;
+  color: white;
+  font-size: 18px;
+}
+ 
+#month-title {
+  margin: 0;
+}
+ 
+.day {
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+ 
+.shift-btn {
+  width: 100%;
+  padding: 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #333;
+  color: white;
+  font-size: 16px;
+}
+ 
+.shift-btn:active {
+  transform: scale(0.98);
+}
+ 
+.active {
+  background: #00b894;
+}
+ 
+.submit-btn,
+#reset-btn {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #00b894;
+  color: white;
+  font-size: 18px;
+  margin-top: 20px;
+}
+ 
+.staff {
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+ 
+.staff p {
+  margin: 8px 0;
+}
+ 
+ 
+  
+ 
